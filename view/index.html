@@ -1,0 +1,16 @@
+<body>
+    <button id="btn">Click me</button>
+  </body>
+
+
+<script>
+    let btn = document.getElementById("btn");
+btn.addEventListener('click', event => {
+   var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/habits', false);
+    xhr.send();
+    alert(xhr.responseText);
+});
+</script>
+
+ 
