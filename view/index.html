@@ -5,7 +5,7 @@
 
 <script>
     let btn = document.getElementById("btn");
-btn.addEventListener('click', event => {
+   btn.addEventListener('click', event => {
    var xhr = new XMLHttpRequest();
     xhr.open('GET', '/habits', false);
     xhr.send();
@@ -13,4 +13,20 @@ btn.addEventListener('click', event => {
 });
 </script>
 
- 
+<form action="http://foo.com" method="post">
+  <! --form action with db connect like insert.go ?? -->
+  <div>
+    <label for="h1">Enter habit name</label>
+    <input name="say" id="say" value="something">
+  </div>
+  <div>
+    <label for="h2">Specify habit subname (if exists)</label>
+    <input name="sayy" id="sayy" value="subsomething">
+  </div>
+  <div>
+    <button>Send</button>
+  </div>
+</form> 
+
+
+
