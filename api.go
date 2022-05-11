@@ -41,12 +41,30 @@ func main() {
 	log.Println("OK")
 	http.ListenAndServe(":4000", router)
 
-	/*func GetAllHabits(c *gin.Context) {
-		var habits []db.Habit
-		db.Find(&habits)
-		c.JSON(http.StatusOK, gin.H{"data": habits})
-	  }
-    */
+	func GetHabits(w http.ResponseWriter, r *http.Request) {
+		db := setupDB()
+		rows, err := db.Query("SELECT * FROM habits")
+
+		checkErr(err)
+
+		var habits []Habit
+	
+		for rows.Next() {
+			var habit_id int
+			var habit_name string
+			var habit_subname string
+	
+			err = rows.Scan(&habit_id, &habit_name, &habit_subname)
+			checkErr(err)
+	
+			movies = append(habits, Habit{HabitID: habit_id, HabitName: habit_name, HabitSubname: habit_subname})
+		}
+	
+		var response = JsonResponse{Type: "success", Data: habits}
+	
+		json.NewEncoder(w).Encode(response)
+	}
+
 	func AddHabit(w http.ResponseWriter, r *http.Request) {
 		habit_name := r.FormValue("habitname")
 		habit_subname := r.FormValue("habitsubname")
@@ -68,5 +86,26 @@ func main() {
 		
 	  }
 
+	  func DeleteHabit(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+	
+		habitID := params["habitid"]
+	
+		var response = JsonResponse{}
+	
+		if movieID == "" {
+			response = JsonResponse{Type: "error", Message: "You are missing habit id"}
+		} else {
+			db := setupDB()
+	
+			_, err := db.Exec("DELETE FROM habits where habit_id = $1", habitID )
+	
+			checkErr(err)
+	
+			response = JsonResponse{Type: "success", Message: "The habit has been deleted successfully!"}
+		}
+	
+		json.NewEncoder(w).Encode(response)
+	}
 	
 }
