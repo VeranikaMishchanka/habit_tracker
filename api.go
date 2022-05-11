@@ -47,11 +47,25 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"data": habits})
 	  }
     */
-	func AddHabit(c *gin.Context) {
-		habit := db.Habit{Habit_name: input.Habit_name, Habit_subname: input.Habit_subname}
-		db.DB.Create(&habit)
-	  
-		c.JSON(http.StatusOK, gin.H{"data": habit})
+	func AddHabit(w http.ResponseWriter, r *http.Request) {
+		habit_name := r.FormValue("habitname")
+		habit_subname := r.FormValue("habitsubname")
+
+		var response = JsonResponse{}
+
+		if  habit_name == "" {
+			response = JsonResponse{Type: "error", Message: "You are missing habit name"}
+		} else {
+			db := setupDB()
+			var lastInsertID int
+			err := db.QueryRow("INSERT INTO habits(habitname, habitsubname) VALUES($1, $2) returning id;", habitname, habitsubname).Scan(&lastInsertID)		
+			checkErr(err)
+
+			response = JsonResponse{Type: "success", Message: "The habit has been inserted successfully!"}
+			}
+		
+			json.NewEncoder(w).Encode(response)
+		
 	  }
 
 	
