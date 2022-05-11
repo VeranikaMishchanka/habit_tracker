@@ -42,7 +42,6 @@ func main() {
 	http.ListenAndServe(":4000", router)
 
 	func GetHabits(w http.ResponseWriter, r *http.Request) {
-		db := setupDB()
 		rows, err := db.Query("SELECT * FROM habits")
 
 		checkErr(err)
@@ -74,7 +73,6 @@ func main() {
 		if  habit_name == "" {
 			response = JsonResponse{Type: "error", Message: "You are missing habit name"}
 		} else {
-			db := setupDB()
 			var lastInsertID int
 			err := db.QueryRow("INSERT INTO habits(habitname, habitsubname) VALUES($1, $2) returning id;", habitname, habitsubname).Scan(&lastInsertID)		
 			checkErr(err)
@@ -96,7 +94,6 @@ func main() {
 		if movieID == "" {
 			response = JsonResponse{Type: "error", Message: "You are missing habit id"}
 		} else {
-			db := setupDB()
 	
 			_, err := db.Exec("DELETE FROM habits where habit_id = $1", habitID )
 	
@@ -108,4 +105,13 @@ func main() {
 		json.NewEncoder(w).Encode(response)
 	}
 	
+	func DeleteHabits(w http.ResponseWriter, r *http.Request) {
+		_, err := db.Exec("DELETE FROM habits")
+
+		checkErr(err)
+
+		var response = JsonResponse{Type: "success", Message: "All habits have been deleted successfully!"}
+	
+		json.NewEncoder(w).Encode(response)
+	}
 }
